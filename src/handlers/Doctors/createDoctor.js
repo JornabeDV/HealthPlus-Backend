@@ -4,7 +4,7 @@ const { uploadDoctorImage } = require('../../../utils/cloudinary');
 const fse = require('fs-extra')
 const { createDoctor } = require("../../controllers/doctorsControllers");
 
-const postDoctorStrange = async (req, res) => {
+const postDoctor = async (req, res) => {
     try {
         const { description, enable, name, price, specialty } = req.body;
         //TODO condicionales
