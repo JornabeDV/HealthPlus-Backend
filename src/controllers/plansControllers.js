@@ -37,7 +37,7 @@ const plansController = (req, res) => {
             unit_price: product.price
     }],
     back_urls: {
-        success: 'https://marvelous-phoenix-7efd24.netlify.app/home',
+        success: 'https://marvelous-phoenix-7efd24.netlify.app',
         failure: '',
         pending: '',
     },
