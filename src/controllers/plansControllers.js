@@ -37,7 +37,7 @@ const plansController = (req, res) => {
             unit_price: product.price
     }],
     back_urls: {
-        success: 'http://healthplusbackend-production.up.railway.app',
+        success: 'https://healthplus-soyhenry.netlify.app',
         failure: '',
         pending: '',
     },
@@ -49,4 +49,4 @@ const plansController = (req, res) => {
     .catch((error) => res.status(400).send({error: error.message}))
 }
 
-module.exports = plansController;
+module.exports = plansController;   
