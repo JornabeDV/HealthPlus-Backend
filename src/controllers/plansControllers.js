@@ -45,13 +45,7 @@ const plansController = (req, res) => {
     binary_mode: true,
     }
     mercadopago.preferences.create(preference)
-    .then((response) => {
-        // Redirigir al usuario a la URL de MercadoPago para completar el pago
-        res.redirect(response.body.init_point);
-
-        // Puedes agregar una redirección adicional a la página de inicio después del pago
-        res.redirect('https://marvelous-phoenix-7efd24.netlify.app/home'); 
-    })
+    .then((response) => res.status(200).send({response}))
     .catch((error) => res.status(400).send({error: error.message}))
 }
 
