@@ -9,7 +9,8 @@ const postDate = async (req, res) => {
         const newDate = await createDate(data);
         res.status(201).json(newDate);
     } catch (error) {
-        res.status(400).json(error)
+        console.log(error);
+        res.status(400).json(error.message)
     }
 };
 

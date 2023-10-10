@@ -1,140 +1,143 @@
-const { db } = require('../firebase');
+const { db } = require("../firebase");
 
 //  --- Sign up ---
-const signUpUser = async ({ uid }) => {
-    try {
-        const newUser = await db.collection('users').doc(uid).add({
-            name: '',
-            lastName: '',
-            userId: '',
-            date: '',
-            photo: {}
-        });
+const signUpUser = async ({ email, uid }) => {
+  try {
+    const userRef = db.collection("users").doc(uid);
 
-        return newUser;
-    } catch (error) {
-        throw new Error(error)
-    }
+    await userRef.set({
+      email,
+      name: "",
+      id: "",
+      photo: {},
+      dates: [],
+      rol: "user",
+      enable: false,
+    });
+
+    return userRef.id; // El ID del documento es igual al UID del usuario
+  } catch (error) {
+    console.log(error);
+    throw new Error(error);
+  }
 };
-
-// --- Login ---
-const logInUser = async (email, password) => {
-    try {
-        const userData = await db.collection('users').where('email', '==', email).get();
-        const user = [];
-        userData.forEach((us) => {
-            user.push({
-                id: us.id,
-                ...us.data()
-            })
-        })
-        if (user.length < 1) throw new Error('Mail not registered');
-        if (user[0].password !== password) throw new Error('Unvalid mail or password');
-        else return true;
-    } catch (error) {
-        console.log(error);
-        throw new Error(error)
-    }
-};
-
-
-//? --- Update user ---
-
-const createUser = async ({ name, email, password, personalId, location, enable, photo }) => {
-    try {
-        // Posibilidad de que no manden photo?
-        const updateUser = await db.collection('users').add({
-            enable,
-            name,
-            email,
-            password,
-            personalId,
-            location,
-            photo
-        })
-
-        return {
-            status: 'created',
-            user: updateUser
-        }
-    } catch (error) {
-        console.log(error);
-        throw new Error(error)
-    }
-
-}
 
 // --- Bring an user from data base---
 
 const bringUserById = async (id) => {
-
-    try {
-        const userData = await db.collection('users').doc(id).get();
-       
-        if (userData.empty) {
-            throw new Error(`No user matched with UID: ${id}`);
-        }
-        const user = {
-            id: userData.id,
-            ...userData.data()
-        };
-
-        return user;
-
-    } catch (error) {
-        throw new Error(error)
-    }
+  try {
+    const userData = await db.collection("users").doc(id).get();
+    const user = {
+      id: userData.id,
+      ...userData.data(),
+    };
+    if (!user.email) throw new Error(`No user matched with UID: ${id}`);
+    user.image = user.photo.secure_url;
+    return user;
+  } catch (error) {
+    throw new Error(error);
+  }
 };
 
 // --- Delete an user from data base ---
+
 const deleteUser = async (id) => {
-    try {
-        const deletedUser = await db.collection('users').doc(id).delete();
-        return deletedUser;
-        // Falta tirar error al no encontrar usuario
-    } catch (error) {
-        console.log(error);
-        throw new Error(error)
-    }
-}
+  try {
+    const userRef = await db.collection("users").doc(id).get();
+    const user = {
+      id: userRef.id,
+      ...userRef.data(),
+    };
+    if (!user.email) throw new Error(`No user matched with UID: ${id}`);
+    await db.collection("users").doc(id).delete();
+    return user;
+    // Falta tirar error al no encontrar usuario
+  } catch (error) {
+    console.log(error);
+    throw new Error(error);
+  }
+};
 
-// --- Disable an user from data base --- 
+// --- Enable an user ---
+
+const enableUser = async (id) => {
+  try {
+    const enabledUser = await db.collection("users").doc(id).get();
+    const user = {
+      id: enabledUser.id,
+      ...enabledUser.data(),
+    };
+    if (!user.email) throw new Error(`user with id ${id} not found`);
+    if (user.enable) throw new Error(`user with ID ${id} already enabled`);
+
+    await db.collection("users").doc(id).update({
+      enable: true,
+    });
+    user.enable = true;
+    return user;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+// --- Disable an user from data base ---
+
 const disableUser = async (id) => {
-    try {
-        return await db.collection('users').doc(id).update({
-            enable: false
-        })
-    } catch (error) {
-        throw new Error(error)
-    }
+  try {
+    const disabledUser = await db.collection("users").doc(id).get();
+    const user = {
+      id: disabledUser.id,
+      ...disabledUser.data(),
+    };
+    if (!user.email) throw new Error(`user with ID ${id} not found`);
+    if (!user.enable) throw new Error(`user with ID ${id} already disabled`);
+
+    await db.collection("users").doc(id).update({
+      enable: false,
+    });
+    user.enable = false;
+    return user;
+  } catch (error) {
+    throw new Error(error);
+  }
 };
 
-
-// --- Update user info ---
-const updateUser = async ({ name, lastName, photo, userId, uid, date }) => {
-    try {
-        const userRef = db.collection('users').doc(uid)
-        const res = await userRef.update({name, lastName, userId, date})
-        
-        return {
-            status: 'updated',
-            res
-        }
-    } catch (error) {
-        console.log(error);
-        throw new Error(error)
-    }
+//  --- Update user ---
+const updateUser = async (data) => {
+  const { uid } = data;
+  try {
+    await db.collection("users").doc(uid).update(data);
+    const user = await db.collection("users").doc(uid).get();
+    const userData = {
+      ...user.data(),
+    };
+    return userData;
+  } catch (error) {
+    throw new Error(error);
+  }
 };
 
-// // --- Forgot Password ---
-// const newPassword = async (email) => {
-//     try {
-//         return await db.collection('users')
-//     } catch (error) {
+// --- Bring user's dates ---
 
-//     }
-// }
+const bringUserDates = async (id) => {
+  try {
+    const userRef = await db.collection("users").doc(id).get();
+    const user = {
+      ...userRef.data(),
+    };
+    if (!user.email) throw new Error(`user with ID: ${id} not found`);
+    return user.dates;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
 
-
-
-module.exports = { createUser, bringUserById, deleteUser, disableUser, signUpUser, logInUser, updateUser }
+module.exports = {
+  bringUserById,
+  deleteUser,
+  disableUser,
+  signUpUser,
+  updateUser,
+  enableUser,
+  bringUserDates,
+};

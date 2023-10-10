@@ -1,6 +1,7 @@
 const { signUpUser } = require("../../controllers/usersControllers");
 
 const createUser = async (req, res) => {
+    
     try {
         const {  email, uid } = req.body;
         const data = { email, uid };

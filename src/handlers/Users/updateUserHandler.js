@@ -5,25 +5,30 @@ const { updateUser } = require("../../controllers/usersControllers");
 const updateUserHandler = async (req, res) => {
     try {
         const { uid, name, lastName, date, userId} = req.body;
-        // console.log(name, id, uid);
-        const data = { uid, name, lastName, date, userId };
-        console.log(data);
-        console.log(req.files);
+        const data = {
+            uid
+        };
 
-        if(req.files?.img) {
-            const result = await uploadUserImage(req.files.img.tempFilePath);
+        if(name !== '') data.name = name;
+        if(lastName !== '') data.lastName = lastName;
+        if(date !== '') data.date = date;
+        if(userId !== '') data.userId = userId;
+
+        if(req.files?.image) {
+            const result = await uploadUserImage(req.files.image.tempFilePath);
 
             data.photo = {
                 public_id: result.public_id,
                 secure_url: result.secure_url
             };
-            console.log(data);
-            await fse.unlink(req.files.img.tempFilePath);
+            await fse.unlink(req.files.image.tempFilePath);
         };
-        const updatedUser = updateUser(data);
-        res.status(200).json(updatedUser);
+        const updatedUser = await updateUser(data);
+        res.status(200).json({
+            status: 'updated',
+            updatedUser
+        });
     } catch (error) {
-        console.log(error);
         res.status(400).json(error.message);
     }
 };
