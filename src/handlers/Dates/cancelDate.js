@@ -2,8 +2,8 @@ const { cancelDate } = require("../../controllers/datesControllers");
 
 const cancelDateHandler = async (req, res) => {
     try {
-        const { userId, dateId } = req.body;
-        const date = await cancelDate(dateId, userId);
+        const { userId, dateId, doctorId } = req.body;
+        const date = await cancelDate(dateId, userId, doctorId);
         res.status(200).json({
             status: 'canceled',
             date

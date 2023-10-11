@@ -1,21 +1,3 @@
-// const { db } = require('../firebase');
-
-// // --- Bring all plans from data base ---
-
-// const bringPlans = async () => {
-//     try {
-//         const allPlans = await db.collection('plans').get()
-
-//         const plans = allPlans.docs.map((doc) => ({
-//             id: doc.id,
-//             ...doc.data()
-//         }));
-//         return plans;
-//     } catch (error) {
-//         throw new Error(error)
-//     }
-// };
-// module.exports = {bringPlans};
 const mercadopago = require('mercadopago');
 
 mercadopago.configure({
@@ -37,7 +19,7 @@ const plansController = (req, res) => {
             unit_price: product.price
     }],
     back_urls: {
-        success: 'https://marvelous-phoenix-7efd24.netlify.app',
+        success: 'http://healthplus-henry.netlify.app/confirm',
         failure: '',
         pending: '',
     },
@@ -49,4 +31,4 @@ const plansController = (req, res) => {
     .catch((error) => res.status(400).send({error: error.message}))
 }
 
-module.exports = plansController;   
+module.exports = plansController;

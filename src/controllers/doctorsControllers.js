@@ -1,5 +1,7 @@
 const { db } = require('../firebase');
 
+const { FieldValue } = require('firebase-admin/firestore');
+
 // --- Bring all doctors from data base ---
 
 const bringDoctors = async () => {
@@ -35,25 +37,17 @@ const bringDoctorById = async (id) => {
 
 // --- Create a new doctor ---
 
-const createDoctor = async ({ name, description, photo, price, specialty }) => {
+const createDoctor = async (data) => {
     try {
         await db.collection('doctors').add({
-            description,
+            ...data,
             enable: true,
-            photo,
-            name,
-            price,
-            specialty,
-            rol: 'doctor'
+            rol: 'doctor',
+            comments: [],
+            dates: []
         });
         const doctor = {
-            name,
-            enable: true,
-            description,
-            specialty,
-            price,
-            photo,
-            rol: 'doctor'
+            ...data
         }
         return doctor
     } catch (error) {
@@ -108,8 +102,8 @@ const disableDoctor = async (id) => {
             id: disabledDoctor.id,
             ...disabledDoctor.data()
         }
-        if(!doctor.name) throw new Error(`doctor with ID ${id} not found`);
-        if(!doctor.enable) throw new Error(`doctor with ID ${id} already disabled`);
+        if (!doctor.name) throw new Error(`doctor with ID ${id} not found`);
+        if (!doctor.enable) throw new Error(`doctor with ID ${id} already disabled`);
 
         await db.collection('doctors').doc(id).update({
             enable: false
@@ -131,20 +125,46 @@ const enableDoctor = async (id) => {
             id: enabledDoctor.id,
             ...enabledDoctor.data()
         }
-        if(!doctor.name) throw new Error(`doctor with id ${id} not found`);
-        if(doctor.enable) throw new Error(`doctor with ID ${id} already enabled`);
+        if (!doctor.name) throw new Error(`doctor with id ${id} not found`);
+        if (doctor.enable) throw new Error(`doctor with ID ${id} already enabled`);
 
         await db.collection('doctors').doc(id).update({
             enable: true
         });
         doctor.enable = true;
         return doctor;
-        
+
+    } catch (error) {
+        throw new Error(error)
+    }
+};
+
+const putComments = async (data) => {
+    try {
+        const { userId } = data
+
+        const userRef = await db.collection('users').doc(userId).get()
+        user = {
+            ...userRef.data()
+        };
+
+        const review = {
+            date: data.date,
+            userName: `${user.name} ${user.lastName}`,
+            comment: data.comment,
+            punctuation: data.punctuation            
+        }
+
+        const { doctorId } = data
+        await db.collection('doctors').doc(doctorId).update({
+            comments: FieldValue.arrayUnion(review)
+        })
+        return review
     } catch (error) {
         throw new Error(error)
     }
 };
 
 
-module.exports = { bringDoctors, bringDoctorById, createDoctor, bringDoctorByName, deleteDoctor, disableDoctor, enableDoctor };
+module.exports = { putComments, bringDoctors, bringDoctorById, createDoctor, bringDoctorByName, deleteDoctor, disableDoctor, enableDoctor };
 

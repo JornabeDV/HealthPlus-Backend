@@ -10,10 +10,12 @@ const updateUserHandler = require('../handlers/Users/updateUserHandler');
 const disableUserHandler = require('../handlers/Users/disableUserHandler');
 const enableUserHandler = require('../handlers/Users/enableUserHandler');
 const bringUserDatesHandler = require('../handlers/Users/bringUserDatesHandler');
+const bringUsersHandler = require('../handlers/Users/bringUsers');
 
 const usersRouter = Router();
 
 usersRouter.post('/', postUser);
+usersRouter.get('/', bringUsersHandler);
 usersRouter.get('/dates/:id', bringUserDatesHandler);
 
 usersRouter.put('/profile', fileUpload({

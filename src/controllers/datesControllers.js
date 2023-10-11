@@ -34,14 +34,17 @@ const createDate = async ({ userId, doctorId, date, schedule, email }) => {
 
     newDate.id = collectionRef.id;
 
-    await db
-      .collection("users")
-      .doc(userId)
-      .update({
+    // Add appointment to user
+    await db.collection("users").doc(userId).update({
         dates: FieldValue.arrayUnion(newDate),
       });
 
-    //envia mail con la cita
+      // Add appointment to doctor
+    await db.collection('doctors').doc(doctorId).update({
+      dates: FieldValue.arrayUnion(newDate)
+    })
+
+    // send mail 
     await sendEmail(email, doctor, date, schedule, user);
 
     return {
@@ -49,13 +52,11 @@ const createDate = async ({ userId, doctorId, date, schedule, email }) => {
       newDate,
     };
   } catch (error) {
-    console.log(error);
     throw new Error(error);
   }
 };
 
 // --- check availability ---
-// Con esta forma se hace una consultapara verificar que la cita que sequiere crear sea
 
 const checkDates = async () => {
   try {
@@ -68,14 +69,13 @@ const checkDates = async () => {
     });
     return datesTaken;
   } catch (error) {
-    console.log(error);
     throw new Error(error);
   }
 };
 
 // --- Cancel a Date ---
 
-const cancelDate = async (dateId, userId) => {
+const cancelDate = async (dateId, userId, doctorId) => {
   try {
     const dateRef = await db.collection("dates").doc(dateId).get();
     const date = {
@@ -98,9 +98,16 @@ const cancelDate = async (dateId, userId) => {
 
     filteredDates.push(date);
 
+    // Canceling user's appointment  
     await db.collection("users").doc(userId).update({
-      dates: filteredDates,
+      dates: filteredDates
     });
+
+    // Canceling doctor's appointment 
+    await db.collection('doctors').doc(doctorId).update({
+      dates: filteredDates
+    })
+
     if (date.doctor) {
       await db.collection("dates").doc(dateId).update({
         status: "canceled",
@@ -137,9 +144,16 @@ const successDate = async (dateId, userId) => {
 
     filteredDates.push(date);
 
+    // Marking user's date as taken
     await db.collection("users").doc(userId).update({
       dates: filteredDates,
     });
+
+    // Marking doctor's date as taken
+    await db.collection("doctor").doc(userId).update({
+      dates: filteredDates,
+    });
+
     if (date.doctor) {
       await db.collection("dates").doc(dateId).update({
         status: "taken",

@@ -7,7 +7,7 @@ const destroyDoctor = async (req, res) => {
         // Delete doctor
         const doctor = await deleteDoctor(id);
         // Delete cloudinary image
-        if (doctor.image?.public_id) {
+        if (doctor.photo?.public_id) {
             await deleteImage(doctor.photo.public_id);
         };
         res.status(200).json({
@@ -15,7 +15,6 @@ const destroyDoctor = async (req, res) => {
             doctor
         });
     } catch (error) {
-        console.log(error);
         res.status(404).json(error.message);
     }
 };

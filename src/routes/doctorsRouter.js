@@ -7,6 +7,7 @@ const postDoctor = require('../handlers/Doctors/createDoctor');
 const destroyDoctor = require('../handlers/Doctors/destroyDoctor');
 const disableDoctorHandler = require('../handlers/Doctors/disableDoctorHandler');
 const enableDoctorHandler = require('../handlers/Doctors/enableDoctorHandler');
+const createComments = require('../handlers/Doctors/createComments');
 
 const doctorRouter = Router();
 
@@ -17,6 +18,7 @@ doctorRouter.post('/', fileUpload({  // Middleware para que express pueda recibi
   tempFileDir: './uploads'          // en esta ruta
 }), postDoctor);
 
+doctorRouter.post('/comment', createComments)
 doctorRouter.put('/disable/:id', disableDoctorHandler);
 doctorRouter.put('/enable/:id', enableDoctorHandler);
 doctorRouter.get('/:id', getDoctorById);
