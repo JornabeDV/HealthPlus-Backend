@@ -142,22 +142,6 @@ const disableUser = async (id) => {
     throw new Error(error);
   }
 };
-
-//  --- Update user ---
-// const updateUser = async (data) => {
-//     const { uid } = data;
-//     try {
-//         await db.collection("users").doc(uid).update(data);
-//         const user = await db.collection("users").doc(uid).get();
-//         const userData = {
-//             ...user.data(),
-//         };
-//         return userData;
-//     } catch (error) {
-//         throw new Error(error);
-//     }
-// };
-
 //  --- Update user ---
 const updateUser = async (uid, data) => {
     try {
@@ -204,4 +188,4 @@ const reviewDoctor = async ({ userId, doctorId, comment, punctuation, date }) =>
     }
 };
 
-module.exports = { bringUsers, bringUserById, deleteUser, disableUser, signUpUser, updateUser, enableUser, bringUserDates, reviewDoctor, bringUserByName }
+module.exports = { bringUsers, bringUserById, deleteUser, disableUser, signUpUser, updateUser, enableUser, reviewDoctor, bringUserByName }
