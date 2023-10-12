@@ -1,6 +1,4 @@
-
 const { bringDoctors,bringDoctorByName } = require('../../controllers/doctorsControllers');
-
 
 const getDoctors = async (req, res) => {
 

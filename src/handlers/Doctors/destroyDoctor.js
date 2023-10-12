@@ -6,8 +6,11 @@ const destroyDoctor = async (req, res) => {
         const { id } = req.params;
         // Delete doctor
         const doctor = await deleteDoctor(id);
-        // Delete cloudinary image
-        if (doctor.photo?.public_id) {
+
+        // Delete cloudinary imageonly if it's not the placeholder
+        if (doctor.photo?.public_id ||
+            doctor.photo?.public_id !== 'https://res.cloudinary.com/drpge2a0c/image/upload/v1697037341/userImages/blank-profile-picture-973460_960_720_sgp40b.webp'
+            ) {
             await deleteImage(doctor.photo.public_id);
         };
         res.status(200).json({

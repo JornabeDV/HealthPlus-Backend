@@ -36,12 +36,12 @@ const createDate = async ({ userId, doctorId, date, schedule, email }) => {
 
     // Add appointment to user
     await db.collection("users").doc(userId).update({
-        dates: FieldValue.arrayUnion(newDate),
-      });
+      dates: FieldValue.arrayUnion(newDate),
+    });
 
-      // Add appointment to doctor
+    // Add appointment to doctor
     await db.collection('doctors').doc(doctorId).update({
-      dates: FieldValue.arrayUnion(newDate)
+      dates: FieldValue.arrayUnion(newDate),
     })
 
     // send mail 
@@ -58,16 +58,14 @@ const createDate = async ({ userId, doctorId, date, schedule, email }) => {
 
 // --- check availability ---
 
-const checkDates = async () => {
+const checkDates = async (id) => {
   try {
-    const dates = await db.collection("dates").get();
-    const datesTaken = [];
-    dates.forEach((date) => {
-      datesTaken.push({
-        ...date.data(),
-      });
-    });
-    return datesTaken;
+    const doctorRef = await db.collection('doctors').doc(id).get();
+    const doctorData = {
+      ...doctorRef.data()
+    };
+    const doctorDates = doctorData.dates.filter(date => date.status === 'pending');
+    return doctorDates
   } catch (error) {
     throw new Error(error);
   }
@@ -91,10 +89,16 @@ const cancelDate = async (dateId, userId, doctorId) => {
     const filteredDates = user.dates.filter((date) => date.id !== dateId);
 
     if (date.status === "canceled")
-      throw new Error(`date with ID: ${dateId} already canceled`);
+      throw new Error(`date with ID: ${dateId} has been already canceled`);
     if (date.status === "taken")
       throw new Error(`date with ID: ${dateId} has been already taken`);
     else date.status = "canceled";
+
+    if (date.doctor) {
+      await db.collection("dates").doc(dateId).update({
+        status: "canceled",
+      });
+    } else throw new Error(`date with id ${dateId} not found`);
 
     filteredDates.push(date);
 
@@ -108,12 +112,6 @@ const cancelDate = async (dateId, userId, doctorId) => {
       dates: filteredDates
     })
 
-    if (date.doctor) {
-      await db.collection("dates").doc(dateId).update({
-        status: "canceled",
-      });
-      return date;
-    } else throw new Error(`date with id ${dateId} not found`);
   } catch (error) {
     throw new Error(error);
   }
@@ -150,7 +148,7 @@ const successDate = async (dateId, userId) => {
     });
 
     // Marking doctor's date as taken
-    await db.collection("doctor").doc(userId).update({
+    await db.collection("doctors").doc(userId).update({
       dates: filteredDates,
     });
 

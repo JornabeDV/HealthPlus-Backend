@@ -1,13 +1,12 @@
 const { checkDates } = require("../../controllers/datesControllers");
 
-
 const getDates = async (req, res) => {
     try {
-        const dates = await checkDates();
+        const { id } = req.params
+        const dates = await checkDates(id);
         res.status(200).json(dates);
     } catch (error) {
-        console.log(error);
-        res.status(500).json(error.message)
+        res.status(404).json(error.message)
     }
 };
 

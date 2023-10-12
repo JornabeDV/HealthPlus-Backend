@@ -9,8 +9,8 @@ const successDateHandler = require('../handlers/Dates/successDateHandler');
 const datesRouter = Router();
 
 datesRouter.post('/', postDate);
-datesRouter.get('/', getDates);
-datesRouter.put('/', successDateHandler)
+datesRouter.get('/:id', getDates);
+datesRouter.put('/success', successDateHandler)
 datesRouter.put('/cancel', cancelDateHandler);
 
 
