@@ -2,8 +2,8 @@ const { successDate } = require("../../controllers/datesControllers");
 
 const successDateHandler = async (req, res) => {
     try {
-        const { userId, dateId } = req.body;
-        const date = await successDate(dateId, userId);
+        const { dateId, userId, doctorId } = req.body;
+        const date = await successDate(dateId, userId, doctorId);
         res.status(200).json({
             status: 'taken',
             date

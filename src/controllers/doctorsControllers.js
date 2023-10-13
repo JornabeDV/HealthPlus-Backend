@@ -140,25 +140,37 @@ const enableDoctor = async (id) => {
     }
 };
 
-const putComments = async (data) => {
+const putComments = async ({ userId, doctorId, dateId, date, comment, punctuation }) => {
     try {
-        const { userId } = data
-
         const userRef = await db.collection('users').doc(userId).get()
         user = {
             ...userRef.data()
         };
 
         const review = {
-            date: data.date,
+            date,
             userName: `${user.name} ${user.lastName}`,
-            comment: data.comment,
-            punctuation: data.punctuation
+            comment,
+            punctuation
         }
 
-        const { doctorId } = data
-        await db.collection('doctors').doc(doctorId).update({
-            comments: FieldValue.arrayUnion(review)
+        const doctorRef = await db.collection('doctors').doc(doctorId).get()
+
+        const doctor = {
+            ...doctorRef.data()
+        }
+
+        const reviewedDate = doctor.dates.find(date => date.id === dateId);
+        if (reviewedDate.reviewed === true)
+            throw new Error('the appointment has already been reviewed')
+        reviewedDate.reviewed = true;
+
+        const filteredDates = doctor.dates.filter(date => date.id !== dateId);
+        filteredDates.push(reviewedDate);
+
+        db.collection('doctors').doc(doctorId).update({
+            comments: FieldValue.arrayUnion(review),
+            dates: filteredDates
         })
         return review
     } catch (error) {

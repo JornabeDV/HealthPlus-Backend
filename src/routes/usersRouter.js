@@ -26,8 +26,8 @@ usersRouter.put('/profile', fileUpload({
 }), updateUserHandler);
 
 usersRouter.post('/signup', createUser);
-
 usersRouter.post('/login', logInHandler);
+
 usersRouter.put('/disable/:id', disableUserHandler);
 usersRouter.put('/enable/:id', enableUserHandler);
 usersRouter.get('/:id', getUserById);

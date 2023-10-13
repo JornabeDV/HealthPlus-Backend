@@ -119,7 +119,7 @@ const cancelDate = async (dateId, userId, doctorId) => {
 
 // --- Finish a date ---
 
-const successDate = async (dateId, userId) => {
+const successDate = async (dateId, userId, doctorId) => {
   try {
     const dateRef = await db.collection("dates").doc(dateId).get();
     const date = {
@@ -140,6 +140,9 @@ const successDate = async (dateId, userId) => {
       throw new Error(`date with ID: ${dateId} has been canceled`);
     else date.status = "taken";
 
+    // Adding review posibility
+    date.reviewed = false;
+
     filteredDates.push(date);
 
     // Marking user's date as taken
@@ -148,7 +151,7 @@ const successDate = async (dateId, userId) => {
     });
 
     // Marking doctor's date as taken
-    await db.collection("doctors").doc(userId).update({
+    await db.collection("doctors").doc(doctorId).update({
       dates: filteredDates,
     });
 
