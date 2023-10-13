@@ -1,13 +1,12 @@
 require('dotenv').config();
-const admin = require('firebase-admin');
 
-// Especifica la ruta relativa al archivo JSON de credenciales
-const serviceAccount = require('../firebase.json');
+const {initializeApp, applicationDefault} = require('firebase-admin/app');
+const {getFirestore} = require('firebase-admin/firestore')
 
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
+initializeApp({
+    credential: applicationDefault()
 });
 
-const db = admin.firestore();
+const db = getFirestore();
 
-module.exports = { db };
+module.exports = {db};

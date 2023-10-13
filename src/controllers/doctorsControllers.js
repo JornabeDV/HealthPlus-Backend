@@ -44,6 +44,7 @@ const createDoctor = async (data) => {
             ...data,
             enable: true,
             rol: 'doctor',
+            email:'',
             comments: [],
             dates: []
         });
@@ -204,3 +205,4 @@ const updateDoctor = async (id, data) => {
 
 
 module.exports = { putComments, bringDoctors, bringDoctorById, createDoctor, bringDoctorByName, deleteDoctor, disableDoctor, enableDoctor, updateDoctor };
+

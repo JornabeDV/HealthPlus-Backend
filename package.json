@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "Nodemon -L",
-    "start": "node ./index.js"
+    "start": "Nodemon -L"
   },
   "dependencies": {
     "axios": "^1.5.0",

@@ -5,9 +5,8 @@ const { updateUser } = require("../../controllers/usersControllers");
 const updateUserHandler = async (req, res) => {
     try {
         const { uid, name, lastName, date, userId} = req.body;
-        const data = {
-            uid
-        };
+
+        const data = {};
 
         if(name !== '') data.name = name;
         if(lastName !== '') data.lastName = lastName;
@@ -23,7 +22,7 @@ const updateUserHandler = async (req, res) => {
             };
             await fse.unlink(req.files.image.tempFilePath);
         };
-        const updatedUser = await updateUser(data);
+        const updatedUser = await updateUser(uid, data);
         res.status(200).json({
             status: 'updated',
             updatedUser
