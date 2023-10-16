@@ -29,6 +29,21 @@ const signUpUser = async ({ email, uid, photo }) => {
   }
 };
 
+const bringUserDates = async (id) => {
+    try {
+        const userRef = await db.collection('users').doc(id).get();
+        const userData = {
+            ...userRef.data()
+        };
+        if (!userData.email)
+            throw new Error(`User with ID: ${id} not found`)
+        const userDates = userData.dates
+        return userDates;
+    } catch (error) {
+        throw new Error(error);
+    }
+};
+
 //   --- Bring all users ---
 const bringUsers = async () => {
   try {
@@ -201,7 +216,7 @@ const reviewDoctor = async ({ userId, doctorId, dateId, comment, punctuation, da
     }
 };
 
-module.exports = { bringUsers, bringUserById, deleteUser, disableUser, signUpUser, updateUser, enableUser, bringUserByName, reviewDoctor }
+module.exports = { bringUsers, bringUserById, bringUserDates, deleteUser, disableUser, signUpUser, updateUser, enableUser, bringUserByName, reviewDoctor }
 
 
 

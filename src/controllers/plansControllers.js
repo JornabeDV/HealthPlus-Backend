@@ -19,7 +19,7 @@ const plansController = (req, res) => {
             unit_price: product.price
     }],
     back_urls: {
-        success: 'https://healthplus-henry.netlify.app/confirm',
+        success: 'http://healthplus-henry.netlify.app/confirm',
         failure: '',
         pending: '',
     },
