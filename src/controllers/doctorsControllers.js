@@ -44,7 +44,7 @@ const createDoctor = async (data) => {
             ...data,
             enable: true,
             rol: 'doctor',
-            email:'',
+            email: '',
             comments: [],
             dates: []
         });
@@ -58,23 +58,31 @@ const createDoctor = async (data) => {
 };
 
 // --- Bring doctor by name ---
-
 const bringDoctorByName = async (name) => {
     try {
-        const querySnapshot = await db.collection('doctors').where('name', '==', name).get();
-        const doctors = [];
-        querySnapshot.forEach((doc) => {
-            doctors.push({
+        const doctorRef = await db.collection('doctors').get();
+        let foundDoctor = null;
+
+        doctorRef.forEach((doc) => {
+            const doctorData = {
                 id: doc.id,
                 ...doc.data()
-            })
-        })
-        return doctors
+            };
 
+            if (doctorData.name.toLowerCase().includes(name.toLowerCase())) {
+                foundDoctor = doctorData;
+                return; 
+            }
+        });
+
+        if (foundDoctor) {
+            return foundDoctor;
+        } else throw new Error(`No doctor matched with name: ${name}`) 
     } catch (error) {
-        throw new Error(error)
+        throw new Error(error);
     }
 };
+
 
 // --- Delete a doctor ---
 
@@ -205,4 +213,3 @@ const updateDoctor = async (id, data) => {
 
 
 module.exports = { putComments, bringDoctors, bringDoctorById, createDoctor, bringDoctorByName, deleteDoctor, disableDoctor, enableDoctor, updateDoctor };
-

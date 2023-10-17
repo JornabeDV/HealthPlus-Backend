@@ -15,6 +15,7 @@ const createDate = async ({ userId, doctorId, date, schedule, email }) => {
     const userData = await db.collection("users").doc(userId).get();
 
     const user = {
+      id: userData.id,
       ...userData.data(),
     };
 
@@ -27,7 +28,9 @@ const createDate = async ({ userId, doctorId, date, schedule, email }) => {
 
     const newDate = {
       user: user.name,
+      userId: user.id,
       doctor: doctor.name,
+      doctorId,
       specialty: doctor.specialty,
       date,
       schedule,
