@@ -5,9 +5,41 @@ const { createDoctor } = require("../../controllers/doctorsControllers");
 const postDoctor = async (req, res) => {
 
     try {
-        const { description, name, specialty, email } = req.body;
-        if(!description || !name ||!specialty ||  !email) throw new Error('Missing information to create the doctor')
-        const data = {description, name, specialty, email};
+        const { espDescription, engDescription, name, specialty, email } = req.body;
+        if (!espDescription || !engDescription || !name || !specialty || !email)
+            throw new Error('Missing information to create the doctor')
+
+        let espSpecialty = '';
+        let data = { engDescription, espDescription, name, specialty, espSpecialty, email };
+
+        switch (specialty) {
+            case 'Radiology':
+                espSpecialty = 'Radiología'
+                break;
+            case 'Dermatology':
+                espSpecialty = 'Dermatología'
+                break;
+            case 'Rheumatology':
+                espSpecialty = 'Reumatología'
+                break;
+            case 'Psychiatry':
+                espSpecialty = 'Psiquiatría'
+                break;
+            case 'Gastroenterology':
+                espSpecialty = 'Gastroenterologia'
+                break;
+            case 'Endocrinology':
+                espSpecialty = 'Endocrinología'
+                break;
+            case 'Urology':
+                espSpecialty = 'Urología'
+                break;
+            case 'Cardiology':
+                espSpecialty = 'Cardiología'
+            default:
+                break;
+        };
+        data.espSpecialty = espSpecialty
 
         if (req.files?.image) {
 
@@ -30,6 +62,7 @@ const postDoctor = async (req, res) => {
             newDoctor
         })
     } catch (error) {
+        console.log(error.message);
         res.status(400).json(error.message)
     }
 
