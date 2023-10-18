@@ -24,4 +24,3 @@ const {
   };
   
   module.exports = getDoctors;
-  

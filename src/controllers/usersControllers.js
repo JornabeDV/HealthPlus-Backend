@@ -219,6 +219,7 @@ const reviewDoctor = async ({
     if (reviewedDate.reviewed === true)
       throw new Error("the appointment has already been reviewed");
     reviewedDate.reviewed = true;
+    reviewedDate.status = "reviewed";
 
     const filteredDates = user.dates.filter((date) => date.id !== dateId);
     filteredDates.push(reviewedDate);

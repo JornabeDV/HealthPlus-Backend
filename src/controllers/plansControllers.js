@@ -19,12 +19,12 @@ const plansController = (req, res) => {
             unit_price: product.price
     }],
     back_urls: {
-        success: 'http://healthplus-henry.netlify.app/confirm',
-        failure: '',
-        pending: '',
+        success: 'https://healthplus-henry.netlify.app/confirm',
+        failure: 'https://healthplus-henry.netlify.app/',
+        pending: 'https://healthplus-henry.netlify.app/',
     },
     auto_return: 'approved',
-    binary_mode: true,
+    
     }
     mercadopago.preferences.create(preference)
     .then((response) => res.status(200).send({response}))
