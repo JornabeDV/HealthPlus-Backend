@@ -1,5 +1,6 @@
 const { FieldValue } = require("firebase-admin/firestore");
 const { db } = require("../firebase");
+const { deleteImage } = require("../../utils/cloudinary");
 
 //  --- Sign up ---
 
