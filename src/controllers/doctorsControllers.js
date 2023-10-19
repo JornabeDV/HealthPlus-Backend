@@ -149,6 +149,8 @@ const enableDoctor = async (id) => {
   }
 };
 
+// -- Leave a comment --
+
 const putComments = async ({
   userId,
   doctorId,
@@ -177,9 +179,9 @@ const putComments = async ({
     };
 
     const reviewedDate = doctor.dates.find((date) => date.id === dateId);
-    if (reviewedDate.reviewed === true)
+    if (reviewedDate.status === 'reviewed')
       throw new Error("the appointment has already been reviewed");
-    reviewedDate.reviewed = true;
+    reviewedDate.status === 'reviewed';
 
     const filteredDates = doctor.dates.filter((date) => date.id !== dateId);
     filteredDates.push(reviewedDate);
