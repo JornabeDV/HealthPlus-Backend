@@ -177,11 +177,29 @@ const putComments = async ({
     const doctor = {
       ...doctorRef.data(),
     };
+    if (doctor.comments.length > 0) {
+      let doctorRating = punctuation;
+      let quantity = 1;
+
+      doctor.comments.forEach((comm) => {
+        doctorRating += comm.punctuation;
+        quantity++;
+      });
+      const currentPunctuation = doctorRating / quantity;
+      await db
+        .collection("doctors")
+        .doc(doctorId)
+        .update({ rating: Math.floor(currentPunctuation) });
+    } else
+      await db
+        .collection("doctors")
+        .doc(doctorId)
+        .update({ rating: punctuation });
 
     const reviewedDate = doctor.dates.find((date) => date.id === dateId);
-    if (reviewedDate.status === 'reviewed')
+    if (reviewedDate.status === "reviewed")
       throw new Error("the appointment has already been reviewed");
-    reviewedDate.status === 'reviewed';
+    reviewedDate.status === "reviewed";
 
     const filteredDates = doctor.dates.filter((date) => date.id !== dateId);
     filteredDates.push(reviewedDate);
@@ -194,6 +212,7 @@ const putComments = async ({
       });
     return review;
   } catch (error) {
+    console.log(error);
     throw new Error(error);
   }
 };
